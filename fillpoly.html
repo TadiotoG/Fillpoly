@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Trabalho CG</title>
+</head>
+
+<style>
+    body {
+        text-align: center;
+        align-items: center;
+        background: linear-gradient(0deg,grey, white) center center / cover no-repeat fixed;
+    }
+
+    #myCanvas {
+        border: 1px solid black;
+        background-color: white;
+    }
+
+    #but {
+        margin: 20px;
+    }
+</style>
+
+<body>
+    <h1>Fill Poly:</h1>
+
+    <canvas id="myCanvas" width="600" height="500">
+        <p>Browser não suporta canvas</p>
+    </canvas>
+
+    <div id="but">
+        <button type="button" onclick="apply_fill_poly2all()">Aplicar</button>
+    </div>
+
+    <p> Cor borda:</p>
+    <input type="color" name="line_color" id="line_color" value="#000000">
+
+    <p> Cor preenchimento:</p>
+    <input type="color" name="fill_color" id="fill_color" value="#FF0000">
+
+    <script src="script3.js"></script>
+
+</body>
+</html>
