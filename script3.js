@@ -50,7 +50,7 @@ function create_y_array(y_min, y_max){
 }
 
 function save_intersection(dot0, dot1, array2save){ 
-    if (dot0.y > dot1.y){
+    if (dot0.y > dot1.y){ // Without this, the conection between the last and the first dot can't be done
         let aux = dot0;
         dot0 = dot1;
         dot1 = aux;
@@ -62,19 +62,19 @@ function save_intersection(dot0, dot1, array2save){
     let tx = dx / dy;
     let new_x = dot0.x;
 
-    let arr_real_postion = array2save[0].y;
+    let arr_real_position = array2save[0].y;
 
     for (let new_y=dot0.y; new_y < dot1.y; new_y++){
         new_x = new_x + tx;
 
         ctx.beginPath()
         let line_color = document.getElementById('line_color').value
-        ctx.fillStyle = line_color; // Cor de fundo
+        ctx.fillStyle = line_color; // Color of the line
         ctx.arc(new_x, new_y, 1, 0, 360, false);
         ctx.fill();
 
-        // console.log(array2save[new_y-arr_real_postion].y + "<< >>" + new_y)
-        array2save[new_y-arr_real_postion].x.push(new_x);
+        // console.log(array2save[new_y-arr_real_position].y + "<< >>" + new_y)
+        array2save[new_y-arr_real_position].x.push(new_x);
     }
 }
 
@@ -100,7 +100,7 @@ function fill_between_x(x0, x1, y, color){
     }
 }
 
-function fill(y_array, fill_color){
+function fill_polygon(y_array, fill_color){
     let first_y_real_pos = y_array[0].y;
 
     for (let i = 0; i < y_array.length; i++){
@@ -120,7 +120,7 @@ function apply_fill_poly2all(){
     }
     polygons.push(polygon);
 
-    apply_fill_poly(polygon)
+    apply_fill_poly(polygon);
     
     dot_positions = []
     y_array = []
@@ -141,16 +141,14 @@ function found_ymin_ymax(d_positions){
 }
 
 function apply_fill_poly(polygon) {
-    let y_tuple = found_ymin_ymax(polygon.dots);
+    let y_tuple = found_ymin_ymax(polygon.dots); // Find the extremes y from all the dots
     //console.log(y_tuple[0] + "<< >>" + y_tuple[1])
     let y_min = y_tuple[0];
     let y_max = y_tuple[1];
-    // let y_min = polygon.dots[0].y;
-    // let y_max = polygon.dots[polygon.dots.length-1].y;
 
-    y_array = create_y_array(y_min, y_max);
+    y_array = create_y_array(y_min, y_max); // Create the vector guided by the y coordinate
 
-    for (let i = 0; i < polygon.dots.length; i++){
+    for (let i = 0; i < polygon.dots.length; i++){ // Save the intersections from dot to dot
         if ( i === polygon.dots.length-1){
             save_intersection(polygon.dots[i], polygon.dots[0], y_array);
         } else {
@@ -159,8 +157,8 @@ function apply_fill_poly(polygon) {
     }
 
     y_array = sort_x_arrays(y_array);
-    fill_color = polygon.color
-    fill(y_array, fill_color);
+    fill_color = polygon.color;
+    fill_polygon(y_array, fill_color);
 }
 
 function setPixel(imageData, x, y, r, g, b, a) {
