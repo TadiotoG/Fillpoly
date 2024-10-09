@@ -21,7 +21,7 @@ el.addEventListener("click", (e) => {
         y: y
       }
       dot_positions.push(dot)
-      draw_dot(x, y)
+      // draw_dot(x, y)
     //console.log(dot_positions[0].x + " << x y >> " + dot_positions[0].y)      
 })
 
@@ -62,20 +62,17 @@ function save_intersection(dot0, dot1, array2save){
     let tx = dx / dy;
     let new_x = dot0.x;
 
-    let arr_real_position = array2save[0].y;
+    let arr_real_position = array2save[0].y; // first y of the struct created 
 
-    for (let new_y=dot0.y; new_y < dot1.y; new_y++){
+    for (let new_y=dot0.y; new_y < dot1.y; new_y++){ // new_y is the first position of the polygon
         new_x = new_x + tx;
-
-        ctx.beginPath()
-        let line_color = document.getElementById('line_color').value
-        ctx.fillStyle = line_color; // Color of the line
-        ctx.arc(new_x, new_y, 1, 0, 360, false);
-        ctx.fill();
-
-        // console.log(array2save[new_y-arr_real_position].y + "<< >>" + new_y)
         array2save[new_y-arr_real_position].x.push(new_x);
     }
+
+    // ctx.beginPath();
+    // ctx.moveTo(dot0.x, dot0.y);
+    // ctx.lineTo(dot1.x, dot1.y);
+    // ctx.stroke();
 }
 
 function comparaNumeros(a,b) {
@@ -93,10 +90,12 @@ function sort_x_arrays(y_array){
 
 function fill_between_x(x0, x1, y, color){
     for(let i = x0+1; i < x1; i++){
-        ctx.beginPath()
+        // ctx.beginPath();
         ctx.fillStyle = color; // Cor de fundo
-        ctx.arc(i, y, 1, 0, 360, false);
-        ctx.fill();
+        // ctx.arc(i, y, 1, 0, 360, false);
+        // ctx.fill();
+
+        ctx.fillRect(i, y, 1, 1);
     }
 }
 
@@ -126,25 +125,34 @@ function apply_fill_poly2all(){
     y_array = []
 }
 
-function found_ymin_ymax(d_positions){
+function found_ymin_ymax(d_positions){ // Return which index from the dots that are the extremes, the higher dot and the lowest dot
     let y_min = 100000;
     let y_max = -1;
+    let i_min = -1;
+    let i_max = -1;
+
     for (let i=0; i < d_positions.length; i++){
         if (y_max < d_positions[i].y){
             y_max = d_positions[i].y;
+            i_max = i;
         }
         if (y_min > d_positions[i].y){
             y_min = d_positions[i].y;
+            i_min = i;
         }
     }
-    return [y_min, y_max];
+    return [i_min, i_max];
 }
 
 function apply_fill_poly(polygon) {
     let y_tuple = found_ymin_ymax(polygon.dots); // Find the extremes y from all the dots
     //console.log(y_tuple[0] + "<< >>" + y_tuple[1])
-    let y_min = y_tuple[0];
-    let y_max = y_tuple[1];
+
+    polygon.dots[y_tuple[0]].y += 1;
+    polygon.dots[y_tuple[1]].y -= 1;
+
+    let y_min = polygon.dots[y_tuple[0]].y;
+    let y_max = polygon.dots[y_tuple[1]].y;
 
     y_array = create_y_array(y_min, y_max); // Create the vector guided by the y coordinate
 
