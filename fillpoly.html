@@ -10,7 +10,17 @@
     body {
         text-align: center;
         align-items: center;
+        display: flex;
+        justify-content: center;
         background: linear-gradient(0deg,grey, white) center center / cover no-repeat fixed;
+    }
+
+    .canvas_container {
+        display: inline-block;
+    }
+
+    .buttons_container {
+        display: inline-block;
     }
 
     #myCanvas {
@@ -18,27 +28,57 @@
         background-color: white;
     }
 
-    #but {
+    .screens {
         margin: 20px;
     }
+
+    #change_color_screen {
+        width: 200px;
+        height: 200px;
+        border: 1px solid black;
+        border-radius: 3px;
+        background-color: white;
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        visibility: hidden;
+    }
+
 </style>
 
 <body>
-    <h1>Fill Poly:</h1>
-
-    <canvas id="myCanvas" width="600" height="500">
-        <p>Browser não suporta canvas</p>
-    </canvas>
-
-    <div id="but">
-        <button type="button" onclick="apply_fill_poly2all()">Aplicar</button>
+    <div class = "canvas_container">
+        <h1>Fill Poly:</h1>
+        <canvas id="myCanvas" width="600" height="500">
+            <p>Browser não suporta canvas</p>
+        </canvas>
     </div>
 
-    <p> Cor borda:</p>
-    <input type="color" name="line_color" id="line_color" value="#000000">
-
-    <p> Cor preenchimento:</p>
-    <input type="color" name="fill_color" id="fill_color" value="#FF0000">
+    <div class = "buttons_container">
+        <div id="but" class = "screens">
+            <button type="button" onclick="add_polygon2system()">Aplicar</button>
+        </div>
+        <div id="change_color_button" class = "screens">
+            <button type="button" onclick="button_change_color()">Alterar a cor do polígono</button>
+        </div>
+        <div id="remove_polygon" class = "screens">
+            <button type="button" onclick="button_remove_polygon()">Remover polígono</button>
+        </div>
+        <div class = "screens">
+            <p> Cor borda:</p >
+            <input type="color" name="line_color" id="line_color" value="#000000">
+        </div>
+        <div class = "screens">
+            <p> Cor preenchimento:</p>
+            <input type="color" name="fill_color" id="fill_color" value="#FF0000">
+        </div>
+    </div>
+    
+    <div id="change_color_screen">
+        <h2>Qual a nova cor para o polígono selecionado?</h2>
+        <input type="color" name="new_color" id="new_color" value="#FF0000">
+        <button type="button" onclick="apply_change_of_color()">Aplicar</button>
+    </div>
 
     <script src="script3.js"></script>
 
