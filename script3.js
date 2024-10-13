@@ -111,15 +111,15 @@ function save_intersection(dot0, dot1, array2save){
 	// console.log("Len arra2save: " + array2save.length)
 	for (let new_y=dot0.y; new_y < dot1.y; new_y++){ // new_y is the first position of the polygon
 		new_x = new_x + tx;
-		// console.log("onde vai dar merda: " + (new_y-arr_real_position))
 		array2save[new_y-arr_real_position].x.push(new_x);
 	}
-
-	// console.log("Len arra2save " + array2save.length + "\nMin " + dot0.y + "\nMax " + dot1.y)
 
 	ctx.beginPath();
 	ctx.moveTo(dot0.x, dot0.y);
 	ctx.lineTo(dot1.x, dot1.y);
+	
+	ctx.strokeStyle = document.getElementById("line_color").value
+	ctx.lineWidth = 2;
 	ctx.stroke();
 }
 
@@ -140,12 +140,10 @@ function fill_between_x(x0, x1, y, color){
 	for(let i = x0+1; i < x1; i++){
 		ctx.beginPath();
 		ctx.fillStyle = color; // Cor de fundo
-		ctx.arc(i, y, 1, 0, 360, false);
-		ctx.fill();
-
-		// ctx.fillRect(i, y, 1, 1);
+		ctx.fillRect(Math.floor(i), Math.floor(y), 1, 1);
 	}
 }
+
 
 function fill_polygon(y_array, fill_color){
 	let first_y_real_pos = y_array[0].y;
