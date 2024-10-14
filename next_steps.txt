@@ -1,4 +1,0 @@
-1º Organizar o código com base na funcao add_polygon2system
-
-2º Tirar o Y pertencente aos pontos
-

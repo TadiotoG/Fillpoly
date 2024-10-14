@@ -28,13 +28,15 @@ el.addEventListener("click", (e) => {
 
 		if (flag_change_color === true){
 			save_polygon2_changecolor = find_polygon_by_click(dot);
+			if (save_polygon2_changecolor === -1){
+				alert("Clique próximo as arestas do polígono que deseja selecionar.")
+			} else {
 			change_polygon_color();
+			}
 			flag_change_color = false;
 		} else if (flag_remove_polygon === true) {
 			remove_polygon(find_polygon_by_click(dot));
 			flag_remove_polygon = false;
-			ctx.fillStyle = "white";
-			ctx.fillRect(0, 0, canvas.width, canvas.height);
 			apply_fill_poly2all();
 		} else {
 			dot_positions.push(dot);
@@ -65,7 +67,11 @@ function apply_change_of_color(){
 }
 
 function remove_polygon(polygon_position){
-	polygons.splice(polygon_position, 1);
+	if (polygon_position === -1){
+		alert("Clique próximo as arestas do polígono que deseja remover.")
+	} else {
+		polygons.splice(polygon_position, 1);
+	}
 }
 
 function draw_dot(dot){
@@ -79,7 +85,7 @@ function create_y_array(y_min, y_max){
 	let y_length = y_max - y_min;
 	let array4each_y = []
 
-	aux = y_min;
+	let aux = y_min;
 	for (let i = 0; i < y_length; i++){
 		let y_obj = {
 			y: aux,
@@ -136,7 +142,7 @@ function sort_x_arrays(y_array){
 }
 
 function fill_between_x(x0, x1, y, color){
-	for(let i = x0+1; i < x1; i++){
+	for(let i = x0; i <= x1; i++){
 		ctx.beginPath();
 		ctx.fillStyle = color; // Cor de fundo
 		ctx.fillRect(Math.floor(i), Math.floor(y), 1, 1);
@@ -156,19 +162,29 @@ function fill_polygon(y_array, fill_color){
 	}
 }
 
-function add_polygon2system(){ 
-	let polygon = {
-		dots: dot_positions,
-		color: fill_color = document.getElementById('fill_color').value,
-		edge: document.getElementById("borda").checked
+function add_polygon2system(){
+	if (dot_positions.length < 3){
+		alert("Necessário no mínimo 3 vértices")
+		dot_positions = []
+		y_array = []
+		apply_fill_poly2all()
 	}
-	polygons.push(polygon);
-	apply_fill_poly(polygon);
-	dot_positions = []
-	y_array = []
+	else {
+		let polygon = {
+			dots: dot_positions,
+			color: fill_color = document.getElementById('fill_color').value,
+			edge: document.getElementById("borda").checked
+		}
+		polygons.push(polygon);
+		apply_fill_poly(polygon);
+		dot_positions = []
+		y_array = []
+	}
 }
 
 function apply_fill_poly2all(){
+	ctx.fillStyle = "white";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	for (let i=0; i < polygons.length; i++){
 		apply_fill_poly(polygons[i]);
 	}
@@ -238,6 +254,9 @@ function find_polygon_by_click(click){
 			closer_distance = dist2the_edge;
 			closer_polygon = i;
 		}
+	}
+	if (closer_distance > 30) {
+		return -1
 	}
 	return closer_polygon;
 }
