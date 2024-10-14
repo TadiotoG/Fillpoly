@@ -19,12 +19,11 @@ el.addEventListener("click", (e) => {
 	  
 	  const x = Math.floor(e.clientX - rect.left);
 	  const y = Math.floor(e.clientY - rect.top);
-	  
-	  console.log("x: " + x + " - y: " + y);
 
 	  let dot = {
 		x: x,
-		y: y
+		y: y,
+		color: document.getElementById("vert_color").value
 	  }
 
 		if (flag_change_color === true){
@@ -39,7 +38,7 @@ el.addEventListener("click", (e) => {
 			apply_fill_poly2all();
 		} else {
 			dot_positions.push(dot);
-			draw_dot(x, y);
+			draw_dot(dot);
 	  	}
 })
 
@@ -69,10 +68,10 @@ function remove_polygon(polygon_position){
 	polygons.splice(polygon_position, 1);
 }
 
-function draw_dot(x, y){
+function draw_dot(dot){
 	ctx.beginPath();
-	ctx.fillStyle = "#000000"; // Cor de fundo
-	ctx.arc(x, y, 1, 0, 360, false);
+	ctx.fillStyle = dot.color;
+	ctx.arc(dot.x, dot.y, 2, 0, 360, false);
 	ctx.fill();
 }
 
@@ -89,7 +88,6 @@ function create_y_array(y_min, y_max){
 		array4each_y.push(y_obj);
 		aux++;
 	}
-
 	return array4each_y;
 }
 
@@ -113,12 +111,13 @@ function save_intersection(dot0, dot1, array2save){
 		new_x = new_x + tx;
 		array2save[new_y-arr_real_position].x.push(new_x);
 	}
+}
 
+function draw_line(dot0, dot1, color){
 	ctx.beginPath();
 	ctx.moveTo(dot0.x, dot0.y);
 	ctx.lineTo(dot1.x, dot1.y);
-	
-	ctx.strokeStyle = document.getElementById("line_color").value
+	ctx.strokeStyle = color // document.getElementById("line_color").value
 	ctx.lineWidth = 2;
 	ctx.stroke();
 }
@@ -144,7 +143,6 @@ function fill_between_x(x0, x1, y, color){
 	}
 }
 
-
 function fill_polygon(y_array, fill_color){
 	let first_y_real_pos = y_array[0].y;
 
@@ -158,10 +156,11 @@ function fill_polygon(y_array, fill_color){
 	}
 }
 
-function add_polygon2system(){
+function add_polygon2system(){ 
 	let polygon = {
 		dots: dot_positions,
-		color: fill_color = document.getElementById('fill_color').value
+		color: fill_color = document.getElementById('fill_color').value,
+		edge: document.getElementById("borda").checked
 	}
 	polygons.push(polygon);
 	apply_fill_poly(polygon);
@@ -196,11 +195,6 @@ function found_ymin_ymax(d_positions){ // Return which index from the dots that 
 
 function apply_fill_poly(polygon) {
 	let y_tuple = found_ymin_ymax(polygon.dots); // Find the extremes y from all the dots
-	//console.log(y_tuple[0] + "<< >>" + y_tuple[1])
-
-	// polygon.dots[y_tuple[0]].y += 1;
-	// polygon.dots[y_tuple[1]].y -= 1;
-
 	let y_min = polygon.dots[y_tuple[0]].y;
 	let y_max = polygon.dots[y_tuple[1]].y;
 
@@ -214,15 +208,23 @@ function apply_fill_poly(polygon) {
 		}
 	}
 
-	// polygon.dots[y_tuple[0]].y -= 1;
-	// polygon.dots[y_tuple[1]].y += 1;
-
 	y_array = sort_x_arrays(y_array);
-	for (let i = 0; i < y_array.length; i++){
-		//console.log("y = "+ y_array[i].y + "   x = " + y_array[i].x)
-	}
 	fill_color = polygon.color;
 	fill_polygon(y_array, fill_color);
+
+	if (polygon.edge === true)
+		for (let i = 0; i < polygon.dots.length; i++){ // Save the intersections from dot to dot
+			if ( i === polygon.dots.length-1){
+				draw_line(polygon.dots[i], polygon.dots[0], "yellow");
+			} else {
+				draw_line(polygon.dots[i], polygon.dots[i+1], "yellow");
+			}
+		}
+
+	
+	for (let i = 0; i < polygon.dots.length; i++){
+		draw_dot(polygon.dots[i]);
+	}
 }
 
 function find_polygon_by_click(click){
@@ -230,58 +232,59 @@ function find_polygon_by_click(click){
 	let closer_distance = 10000
 	
 	for (let i=0; i < polygons.length; i++){
-		dist2the_edge = get_nearest_edge(polygons[i], click) // get the distance from all the edges
+		dist2the_edge = get_nearest_edge(polygons[i], click) // get the nearest distance from all the edges
 
 		if (dist2the_edge < closer_distance){ // search for the closer one and its polygon
 			closer_distance = dist2the_edge;
 			closer_polygon = i;
 		}
 	}
-
 	return closer_polygon;
 }
 
 function get_nearest_edge(polygon, click){
-
-	let closer_distance = 10000
+	let closer_distance = 10000;
+	let aux = 0;
 	for (let i = 0; i < polygon.dots.length; i++){
 		if ( i === polygon.dots.length-1){
-			aux = calculate_the_distance(polygon.dots[i], polygon.dots[0], click);
+			aux = calculate_distance_straight_segment(polygon.dots[i], polygon.dots[0], click);
 		} else {
-			aux = calculate_the_distance(polygon.dots[i], polygon.dots[i+1], click);
+			aux = calculate_distance_straight_segment(polygon.dots[i], polygon.dots[i+1], click);
 		}
 
 		if (aux < closer_distance){
 			closer_distance = aux;
 		}
 	}
-	return closer_distance
+	return closer_distance;
 }
 
-function calculate_the_distance(dot0, dot1, click){
-	// a = DeltaY/DeltaX 
-	// y = ax + b
-	// eq. geral a partir da linha acima = -ax + y - b
-	// if (dot0.y > dot1.y){ // Without this, the conection between the last and the first dot can't be done
-	// 	let aux = dot0;
-	// 	dot0 = dot1;
-	// 	dot1 = aux;
-	// }
-
+function calculate_distance_straight(dot0, dot1, click){
 	let a = (dot1.y - dot0.y) / (dot1.x - dot0.x)
 	let b = - (a * dot0.x - dot0.y)
 
 	a = -a
 	b = -b
-
-	return Math.abs(a * click.x + click.y + b) / (Math.sqrt(a^2 + 1^2))
+	return Math.abs(((a * click.x) + (1 * click.y) + b) / Math.sqrt(Math.abs(a)**2 + 1**2))
 }
 
-function setPixel(imageData, x, y, r, g, b, a) {
-	const index = (y * imageData.width + x) * 4;
-	imageData.data[index + 0] = r; // Vermelho
-	imageData.data[index + 1] = g; // Verde
-	imageData.data[index + 2] = b; // Azul
-	imageData.data[index + 3] = a; // Alpha
-}
+function calculate_distance_straight_segment(A, B, click){
+	let VectorABx = B.x - A.x;
+	let VectorABy = B.y - A.y;
 
+	let VectorACx = click.x - A.x;
+	let VectorACy = click.y - A.y;
+
+	let tx = ((VectorABx * VectorACx) + (VectorABy * VectorACy)) / ((VectorABx * VectorABx) + (VectorABy * VectorABy));
+
+	if (tx > 1){
+		tx = 1;
+ 	} else if (tx < 0) {
+		tx = 0;
+	}
+
+	let Pprojx = (A.x + tx * VectorABx);
+	let Pprojy = (A.y + tx * VectorABy);
+
+	return Math.sqrt((Pprojx - click.x) ** 2 + (Pprojy - click.y) ** 2);
+}
