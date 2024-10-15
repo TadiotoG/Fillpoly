@@ -110,7 +110,7 @@ function comparaNumeros(a,b) {
 function fill_between_x(x0, x1, y, color){
 	for(let i = Math.floor(x0); i <= Math.floor(x1); i++){
 		ctx.beginPath();
-		ctx.fillStyle = color; // Cor de fundo
+		ctx.fillStyle = color;
 		ctx.fillRect(Math.floor(i), Math.floor(y), 1, 1);
 	}
 }
@@ -120,8 +120,6 @@ function fill_polygon(y_array, fill_color){
 
 	for (let i = 0; i < y_array.length; i++){
 		let x_array = y_array[i].x;
-
-		//console.log(first_y_real_pos+i + " << y    " + x_array)
 		for (let j = 0; j < x_array.length-1; j+=2){
 			fill_between_x(x_array[j], x_array[j+1], first_y_real_pos+i, fill_color);
 		}
@@ -187,7 +185,7 @@ function apply_fill_poly(polygon) {
 	fill_polygon(y_array, fill_color);
 
 	if (polygon.edge === true)
-		for (let i = 0; i < polygon.dots.length; i++){ // Save the intersections from dot to dot
+		for (let i = 0; i < polygon.dots.length; i++){
 			if ( i === polygon.dots.length-1){
 				draw_line(polygon.dots[i], polygon.dots[0], "yellow");
 			} else {
@@ -213,9 +211,9 @@ function find_polygon_by_click(click){
 	let closer_distance = 10000
 	
 	for (let i=0; i < polygons.length; i++){
-		dist2the_edge = get_nearest_edge(polygons[i], click) // get the nearest distance from all the edges
+		dist2the_edge = get_nearest_edge(polygons[i], click)
 
-		if (dist2the_edge < closer_distance){ // search for the closer one and its polygon
+		if (dist2the_edge < closer_distance){
 			closer_distance = dist2the_edge;
 			closer_polygon = i;
 		}
