@@ -142,7 +142,7 @@ function sort_x_arrays(y_array){
 }
 
 function fill_between_x(x0, x1, y, color){
-	for(let i = x0; i <= x1; i++){
+	for(let i = Math.floor(x0); i <= Math.floor(x1); i++){
 		ctx.beginPath();
 		ctx.fillStyle = color; // Cor de fundo
 		ctx.fillRect(Math.floor(i), Math.floor(y), 1, 1);
@@ -306,4 +306,11 @@ function calculate_distance_straight_segment(A, B, click){
 	let Pprojy = (A.y + tx * VectorABy);
 
 	return Math.sqrt((Pprojx - click.x) ** 2 + (Pprojy - click.y) ** 2);
+}
+
+function clear_screen(){
+	ctx.fillStyle = "white";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	polygons = []
+	dots = []
 }
