@@ -25,6 +25,7 @@ el.addEventListener("click", (e) => {
 		y: y,
 		color: document.getElementById("vert_color").value
 	  }
+	  console.log("x: " + x + "   y: " + y)
 
 		if (flag_change_color === true){
 			save_polygon2_changecolor = find_polygon_by_click(dot);
@@ -44,43 +45,6 @@ el.addEventListener("click", (e) => {
 	  	}
 })
 
-function button_remove_polygon(){
-	flag_remove_polygon = true;
-	flag_change_color = false;
-}
-
-function button_change_color(){
-	flag_change_color = true;
-	flag_remove_polygon = false;
-}
-
-function change_polygon_color(){
-	document.getElementById("change_color_screen").style.visibility = "visible";
-}
-
-function apply_change_of_color(){
-	ctx.fillStyle = "white";
-	polygons[save_polygon2_changecolor].color = document.getElementById('new_color').value;
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-	apply_fill_poly2all();
-	document.getElementById("change_color_screen").style.visibility = "hidden";
-}
-
-function remove_polygon(polygon_position){
-	if (polygon_position === -1){
-		alert("Clique próximo as arestas do polígono que deseja remover.")
-	} else {
-		polygons.splice(polygon_position, 1);
-	}
-}
-
-function draw_dot(dot){
-	ctx.beginPath();
-	ctx.fillStyle = dot.color;
-	ctx.arc(dot.x, dot.y, 2, 0, 360, false);
-	ctx.fill();
-}
-
 function create_y_array(y_min, y_max){
 	let y_length = y_max - y_min;
 	let array4each_y = []
@@ -97,25 +61,28 @@ function create_y_array(y_min, y_max){
 	return array4each_y;
 }
 
-function save_intersection(dot0, dot1, array2save){ 
-	if (dot0.y > dot1.y){ // Without this, the conection between the last and the first dot can't be done
-		let aux = dot0;
-		dot0 = dot1;
-		dot1 = aux;
-	}
+function save_intersection(dot0, dot1, array2save){
+	if (dot0.y === dot1.y){
+		return;
+	} else {
+		if (dot0.y > dot1.y){
+			let aux = dot0;
+			dot0 = dot1;
+			dot1 = aux;
+		}
 
-	let dx = dot1.x - dot0.x;
-	let dy = dot1.y - dot0.y;
+		let dx = dot1.x - dot0.x;
+		let dy = dot1.y - dot0.y;
 
-	let tx = dx / dy;
-	let new_x = dot0.x;
+		let tx = dx / dy;
+		let new_x = dot0.x;
 
-	let arr_real_position = array2save[0].y; // first y of the struct created 
+		let arr_real_position = array2save[0].y;
 
-	// console.log("Len arra2save: " + array2save.length)
-	for (let new_y=dot0.y; new_y < dot1.y; new_y++){ // new_y is the first position of the polygon
-		new_x = new_x + tx;
-		array2save[new_y-arr_real_position].x.push(new_x);
+		for (let new_y=dot0.y; new_y < dot1.y; new_y++){
+			new_x = new_x + tx;
+			array2save[new_y-arr_real_position].x.push(new_x);
+		}
 	}
 }
 
@@ -123,15 +90,9 @@ function draw_line(dot0, dot1, color){
 	ctx.beginPath();
 	ctx.moveTo(dot0.x, dot0.y);
 	ctx.lineTo(dot1.x, dot1.y);
-	ctx.strokeStyle = color // document.getElementById("line_color").value
+	ctx.strokeStyle = color
 	ctx.lineWidth = 2;
 	ctx.stroke();
-}
-
-function comparaNumeros(a,b) {
-	if (a == b) return 0; 
-	if (a < b) return -1; 
-	if (a > b) return 1;
 }
 
 function sort_x_arrays(y_array){
@@ -139,6 +100,11 @@ function sort_x_arrays(y_array){
 		y_array[i].x = y_array[i].x.sort(comparaNumeros);
 	}
 	return y_array;
+}
+function comparaNumeros(a,b) {
+	if (a == b) return 0; 
+	if (a < b) return -1; 
+	if (a > b) return 1;
 }
 
 function fill_between_x(x0, x1, y, color){
@@ -182,15 +148,7 @@ function add_polygon2system(){
 	}
 }
 
-function apply_fill_poly2all(){
-	ctx.fillStyle = "white";
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-	for (let i=0; i < polygons.length; i++){
-		apply_fill_poly(polygons[i]);
-	}
-}
-
-function found_ymin_ymax(d_positions){ // Return which index from the dots that are the extremes, the higher dot and the lowest dot
+function found_ymin_ymax(d_positions){
 	let y_min = 100000;
 	let y_max = -1;
 	let i_min = -1;
@@ -210,13 +168,13 @@ function found_ymin_ymax(d_positions){ // Return which index from the dots that 
 }
 
 function apply_fill_poly(polygon) {
-	let y_tuple = found_ymin_ymax(polygon.dots); // Find the extremes y from all the dots
+	let y_tuple = found_ymin_ymax(polygon.dots);
 	let y_min = polygon.dots[y_tuple[0]].y;
 	let y_max = polygon.dots[y_tuple[1]].y;
 
-	y_array = create_y_array(y_min, y_max); // Create the vector guided by the y coordinate
+	y_array = create_y_array(y_min, y_max);
 
-	for (let i = 0; i < polygon.dots.length; i++){ // Save the intersections from dot to dot
+	for (let i = 0; i < polygon.dots.length; i++){
 		if ( i === polygon.dots.length-1){
 			save_intersection(polygon.dots[i], polygon.dots[0], y_array);
 		} else {
@@ -237,9 +195,16 @@ function apply_fill_poly(polygon) {
 			}
 		}
 
-	
 	for (let i = 0; i < polygon.dots.length; i++){
 		draw_dot(polygon.dots[i]);
+	}
+}
+
+function apply_fill_poly2all(){
+	ctx.fillStyle = "white";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	for (let i=0; i < polygons.length; i++){
+		apply_fill_poly(polygons[i]);
 	}
 }
 
@@ -306,6 +271,43 @@ function calculate_distance_straight_segment(A, B, click){
 	let Pprojy = (A.y + tx * VectorABy);
 
 	return Math.sqrt((Pprojx - click.x) ** 2 + (Pprojy - click.y) ** 2);
+}
+
+function button_remove_polygon(){
+	flag_remove_polygon = true;
+	flag_change_color = false;
+}
+
+function button_change_color(){
+	flag_change_color = true;
+	flag_remove_polygon = false;
+}
+
+function change_polygon_color(){
+	document.getElementById("change_color_screen").style.visibility = "visible";
+}
+
+function apply_change_of_color(){
+	ctx.fillStyle = "white";
+	polygons[save_polygon2_changecolor].color = document.getElementById('new_color').value;
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	apply_fill_poly2all();
+	document.getElementById("change_color_screen").style.visibility = "hidden";
+}
+
+function remove_polygon(polygon_position){
+	if (polygon_position === -1){
+		alert("Clique próximo as arestas do polígono que deseja remover.")
+	} else {
+		polygons.splice(polygon_position, 1);
+	}
+}
+
+function draw_dot(dot){
+	ctx.beginPath();
+	ctx.fillStyle = dot.color;
+	ctx.arc(dot.x, dot.y, 2, 0, 360, false);
+	ctx.fill();
 }
 
 function clear_screen(){
