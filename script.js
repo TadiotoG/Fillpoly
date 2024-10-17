@@ -90,7 +90,13 @@ function draw_line(dot0, dot1, color){
 	ctx.beginPath();
 	ctx.moveTo(dot0.x, dot0.y);
 	ctx.lineTo(dot1.x, dot1.y);
-	ctx.strokeStyle = color
+	ctx.strokeStyle = color;
+	ctx.lineWidth = 2;
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.moveTo(dot0.x, dot0.y);
+	ctx.lineTo(dot1.x, dot1.y);
+	ctx.strokeStyle = color;
 	ctx.lineWidth = 2;
 	ctx.stroke();
 }
