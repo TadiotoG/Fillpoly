@@ -25,7 +25,7 @@ el.addEventListener("click", (e) => {
 		y: y,
 		color: document.getElementById("vert_color").value
 	  }
-	  console.log("x: " + x + "   y: " + y)
+	  //console.log("x: " + x + "   y: " + y)
 
 		if (flag_change_color === true){
 			save_polygon2_changecolor = find_polygon_by_click(dot);
@@ -191,7 +191,7 @@ function apply_fill_poly(polygon) {
 			} else {
 				draw_line(polygon.dots[i], polygon.dots[i+1], "yellow");
 			}
-		}
+	}
 
 	for (let i = 0; i < polygon.dots.length; i++){
 		draw_dot(polygon.dots[i]);
