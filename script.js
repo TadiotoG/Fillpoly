@@ -25,12 +25,12 @@ el.addEventListener("click", (e) => {
 		y: y,
 		color: document.getElementById("vert_color").value
 	  }
-	  //console.log("x: " + x + "   y: " + y)
+	  // console.log("x: " + x + "   y: " + y)
 
 		if (flag_change_color === true){
 			save_polygon2_changecolor = find_polygon_by_click(dot);
 			if (save_polygon2_changecolor === -1){
-				alert("Clique próximo as arestas do polígono que deseja selecionar.")
+				alert("Clique próximo das arestas do polígono que deseja selecionar.")
 			} else {
 			change_polygon_color();
 			}
@@ -75,6 +75,7 @@ function save_intersection(dot0, dot1, array2save){
 		let dy = dot1.y - dot0.y;
 
 		let tx = dx / dy;
+		console.log("Tx: " + tx + "   dx: "+ dx+ "   dy: "+ dy)
 		let new_x = dot0.x;
 
 		let arr_real_position = array2save[0].y;
@@ -318,5 +319,5 @@ function clear_screen(){
 	ctx.fillStyle = "white";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	polygons = []
-	dots = []
+	dot_positions = []
 }
