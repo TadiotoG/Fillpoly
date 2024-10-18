@@ -6,7 +6,7 @@ Para a criação de polígonos:
 
 1. Defina a cor do vértice (você pode escolher a cor de todos os vértices, basta que para cada vértice, você altere a cor antes de escolher a localização do vértice)
 
-2. Clique na tela para definir onde os vértices do seu polígono estaram localizados.
+2. Clique na tela para definir onde os vértices do seu polígono estarão localizados.
 
 3. Selecione a cor do preenchimento desejado no campo "Cor preenchimento".
 
