@@ -114,7 +114,7 @@ function comparaNumeros(a,b) {
 }
 
 function fill_between_x(x0, x1, y, color){
-	for(let i = Math.floor(x0); i <= Math.floor(x1); i++){
+	for(let i = Math.ceil(x0); i <= Math.floor(x1); i++){
 		ctx.beginPath();
 		ctx.fillStyle = color;
 		ctx.fillRect(Math.floor(i), Math.floor(y), 1, 1);
