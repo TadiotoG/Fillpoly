@@ -75,7 +75,6 @@ function save_intersection(dot0, dot1, array2save){
 		let dy = dot1.y - dot0.y;
 
 		let tx = dx / dy;
-		console.log("Tx: " + tx + "   dx: "+ dx+ "   dy: "+ dy)
 		let new_x = dot0.x;
 
 		let arr_real_position = array2save[0].y;
@@ -302,7 +301,7 @@ function apply_change_of_color(){
 
 function remove_polygon(polygon_position){
 	if (polygon_position === -1){
-		alert("Clique próximo as arestas do polígono que deseja remover.")
+		alert("Clique próximo das arestas do polígono que deseja remover.")
 	} else {
 		polygons.splice(polygon_position, 1);
 	}
